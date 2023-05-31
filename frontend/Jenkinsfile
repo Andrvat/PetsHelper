@@ -1,0 +1,66 @@
+pipeline {
+
+    agent any
+
+    tools {
+        nodejs "Node-JS-18"
+    }
+
+    environment {
+        SONAR_HOST_URL = "https://sonarcloud.io/"
+        SONAR_TOKEN = "e6c9cd9314570f4b880f8cdade3c1204dd7aa768"
+        CI = false
+    }
+
+    stages {
+
+        stage('Build') { 
+            steps {
+
+                    script {
+                        sh 'npm install'
+                    } 
+            }
+        }
+
+        /*
+        stage('Test') {
+            steps {
+                    script {
+                        sh '''
+                            set -x
+                            npm test
+                            '''
+                    }
+            }
+        }
+        */
+
+        stage('Deliver') {
+            steps {
+                    script {
+                        sh '''
+                            npm run build
+                        '''
+                    }
+            }
+        }
+
+        stage('Login in registry') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'andrvat_dockerhub', passwordVariable: 'password', usernameVariable: 'user')]) {
+                            sh "docker login -u ${env.user} -p ${env.password}"
+                }
+                
+            }
+        }
+
+
+        stage('Build frontend image') {
+                    steps {
+                        sh "docker build . -t andrvat/frontend"
+                        sh "docker push andrvat/frontend"
+                    }
+                }
+    }
+}

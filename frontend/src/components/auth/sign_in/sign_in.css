@@ -1,0 +1,15 @@
+
+.btn-primary {
+    color: #ffffff;
+    font-weight: bold;
+    background-color: #68ded3;
+    border-color: #63fff3;
+}
+
+.icon-img {
+    width: 240px;
+    height: 240px;
+    margin-bottom: 2rem;
+    justify-content: center;
+    margin-left: 2rem;
+}
